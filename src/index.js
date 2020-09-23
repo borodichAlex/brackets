@@ -1,54 +1,15 @@
 module.exports = function check(str, Config) {
-  const bracketsConfig = Config.map(item => item.concat())
+    if (str.length % 2 !== 0) return false;
 
-  //count
-  for (let arr of bracketsConfig) {
-    arr.push(0); //count
-  }
+    const stackBrackets = [];
+    const configBrackets = {};
+    Config.forEach((group) => configBrackets[group[0]] = group[1], {})
+    const isLastStackBrackets = (bracket) => bracket === configBrackets[stackBrackets[stackBrackets.length - 1]];
 
-  let num = [];
-
-  for (let ch of str) {
-    let lengthConfig = bracketsConfig.length;
-
-    for (let i = 0; i < lengthConfig; i++) {
-      let subArr = bracketsConfig[i];
-      let openCh = subArr[0];
-      let closeCh = subArr[1];
-      let count = subArr[2];
-      let lenNum = num.length - 1;
-
-      if (ch !== openCh && ch !== closeCh) {
-        continue;
-      }
-
-      if (ch === openCh && ch !== closeCh) {
-        num.push(closeCh)
-        break;
-      }
-
-      if (ch === openCh && ch === closeCh && count === 0) {
-        num.push(ch)
-        subArr.splice(2, 1, count + 1)
-        break;
-      }
-
-      if (ch === closeCh && ch !== num[lenNum]) return false
-
-      if (ch === openCh && ch === closeCh && count > 0) {
-        num.pop(ch)
-        subArr.splice(2, 1, 0)
-        break;
-      }
-
-      if (ch === closeCh && ch === num[lenNum]) {
-        num.pop();
-        break;
-      }
-
+    for (const bracket of str) {
+        isLastStackBrackets(bracket) ?
+            stackBrackets.pop() :
+            stackBrackets.push(bracket);
     }
-
-  }
-
-  return !num.length
+    return (stackBrackets.length) ? false : true;
 }
